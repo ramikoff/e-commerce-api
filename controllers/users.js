@@ -8,7 +8,7 @@ export const getUsers = async (req, res) => {
 
 export const createUser = async (req, res) => {
   const user = await User.create(req.body);
-  console.log("User created:", user.toJSON()); // 🔥 Проверяем, что запись создаётся
+  console.log("User created:", user.toJSON());
   res.status(201).json(user);
 };
 

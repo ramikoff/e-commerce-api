@@ -1,7 +1,21 @@
 import Order from "../models/Order.js";
 import OrderProduct from "../models/OrderProduct.js";
-import Product from "../models/Product.js";
+// Hier muss getProductById importiert werden, um die Produktinformationen zu erhalten
 
+// Mock data for products
+const mockProducts = [
+  { id: 1, name: "Product A", price: 100 },
+  { id: 2, name: "Product B", price: 200 },
+];
+
+// Mock function to simulate fetching a product
+const getProductById = async (productId) => {
+  return mockProducts.find((product) => product.id === productId) || null;
+};
+
+// Dieses Snippet ist eine Dummyfunktion, die Produktinformationen zurückgibt.
+
+// Orders
 export const getOrders = async (req, res) => {
   const orders = await Order.findAll({
     include: { model: OrderProduct, as: "products" },
@@ -26,7 +40,7 @@ export const createOrder = async (req, res) => {
 
   let total = 0;
   for (const item of products) {
-    const product = await Product.findByPk(item.productId);
+    const product = await getProductById(item.productId);
     if (!product) return res.status(400).json({ error: "Product not found" });
 
     await OrderProduct.create({
@@ -58,7 +72,7 @@ export const updateOrder = async (req, res) => {
 
   let total = 0;
   for (const item of products) {
-    const product = await Product.findByPk(item.productId);
+    const product = await getProductById(item.productId); // Используем заглушку
     if (!product) return res.status(400).json({ error: "Product not found" });
 
     await OrderProduct.create({

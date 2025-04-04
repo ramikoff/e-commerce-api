@@ -1,20 +1,24 @@
 import { Router } from "express";
 import {
-  createPost,
-  deletePost,
-  getPostById,
-  getPosts,
-  updatePost,
-} from "../controllers/posts.js";
+  getOrders,
+  getOrderById,
+  createOrder,
+  updateOrder,
+  deleteOrder,
+} from "../controllers/orders.js";
 import validateSchema from "../middlewares/validateSchema.js";
-import PostSchema from "../schemas/PostSchema.js";
+import OrderSchema from "../schemas/OrderSchema.js";
 
-const postRouter = Router();
+const orderRouter = Router();
 
-postRouter
+orderRouter
   .route("/")
-  .get(getPosts)
-  .post(validateSchema(PostSchema), createPost);
-postRouter.route("/:id").get(getPostById).put(updatePost).delete(deletePost);
+  .get(getOrders)
+  .post(validateSchema(OrderSchema), createOrder);
+orderRouter
+  .route("/:id")
+  .get(getOrderById)
+  .put(updateOrder)
+  .delete(deleteOrder);
 
-export default postRouter;
+export default orderRouter;
