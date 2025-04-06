@@ -1,5 +1,5 @@
 {
-  "name": "express-body-validation",
+  "name": "e-commerce-api",
   "version": "1.0.0",
   "main": "server.js",
   "type": "module",

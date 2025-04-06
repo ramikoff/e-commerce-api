@@ -1,36 +1,73 @@
 import Order from "../models/Order.js";
 import OrderProduct from "../models/OrderProduct.js";
-// Сюда нужно импортировать getProductById из контроллера
-// Dummy data for products
-const mockProducts = [
-  { id: 1, name: "Product A", price: 100 },
-  { id: 2, name: "Product B", price: 200 },
-  { id: 3, name: "Product C", price: 300 },
-];
 
-// Dummy function to simulate fetching a product
-const getProductById = async (productId) => {
-  return mockProducts.find((product) => product.id === productId) || null;
-};
+import Product from "../models/Product.js";
+import ErrorResponse from "../utils/ErrorResponse.js";
 
-// This snippet is a dummy function that returns product information.
-
-// Orders
 export const getOrders = async (req, res) => {
   const orders = await Order.findAll({
-    include: { model: OrderProduct, as: "products" },
+    include: [
+      {
+        model: OrderProduct,
+        as: "orderProducts",
+        include: [
+          {
+            model: Product,
+            as: "product",
+            attributes: ["id"],
+          },
+        ],
+      },
+    ],
   });
-  res.json(orders);
+
+  const formattedOrders = orders.map((order) => ({
+    id: order.id,
+    userId: order.userId,
+    total: order.total,
+    products: order.orderProducts.map((orderProduct) => ({
+      productId: orderProduct.productId,
+      quantity: orderProduct.quantity,
+    })),
+  }));
+
+  res.json(formattedOrders);
 };
 
 export const getOrderById = async (req, res) => {
   const { id } = req.params;
+
   const order = await Order.findByPk(id, {
-    include: { model: OrderProduct, as: "products" },
+    include: [
+      {
+        model: OrderProduct,
+        as: "orderProducts",
+        include: [
+          {
+            model: Product,
+            as: "product",
+            attributes: ["id", "name", "price"],
+          },
+        ],
+      },
+    ],
   });
 
-  if (!order) return res.status(404).json({ error: "Order not found" });
-  res.json(order);
+  if (!order) {
+    return res.status(404).json({ error: "Order not found" });
+  }
+
+  const formattedOrder = {
+    id: order.id,
+    userId: order.userId,
+    total: order.total,
+    products: order.orderProducts.map((orderProduct) => ({
+      productId: orderProduct.productId,
+      quantity: orderProduct.quantity,
+    })),
+  };
+
+  res.json(formattedOrder);
 };
 
 export const createOrder = async (req, res) => {
@@ -38,10 +75,20 @@ export const createOrder = async (req, res) => {
 
   const order = await Order.create({ userId });
 
+  if (!order) {
+    return res.status(400).json({ message: "Failed to create order" });
+  }
+
   let total = 0;
+
   for (const item of products) {
-    const product = await getProductById(item.productId);
-    if (!product) return res.status(400).json({ error: "Product not found" });
+    const product = await Product.findByPk(item.productId);
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ message: `Product with ID ${item.productId} not found` });
+    }
 
     await OrderProduct.create({
       orderId: order.id,
@@ -55,7 +102,7 @@ export const createOrder = async (req, res) => {
   await order.update({ total });
 
   const newOrder = await Order.findByPk(order.id, {
-    include: { model: OrderProduct, as: "products" },
+    include: { model: Product, as: "products" },
   });
 
   res.status(201).json(newOrder);
@@ -65,16 +112,23 @@ export const updateOrder = async (req, res) => {
   const { id } = req.params;
   const { products } = req.body;
 
+  const findProductById = async (productId) => {
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      throw new ErrorResponse(`Product with ID ${productId} not found`, 404);
+    }
+    return product;
+  };
+
   const order = await Order.findByPk(id);
   if (!order) return res.status(404).json({ error: "Order not found" });
 
   await OrderProduct.destroy({ where: { orderId: id } });
 
   let total = 0;
-  for (const item of products) {
-    const product = await getProductById(item.productId); // Используем заглушку
-    if (!product) return res.status(400).json({ error: "Product not found" });
 
+  for (const item of products) {
+    const product = await findProductById(item.productId);
     await OrderProduct.create({
       orderId: id,
       productId: item.productId,
@@ -87,7 +141,7 @@ export const updateOrder = async (req, res) => {
   await order.update({ total });
 
   const updatedOrder = await Order.findByPk(id, {
-    include: { model: OrderProduct, as: "products" },
+    include: { model: OrderProduct, as: "orderProducts" },
   });
 
   res.json(updatedOrder);

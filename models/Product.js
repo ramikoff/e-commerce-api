@@ -1,18 +1,11 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../db/index.js';
+import { DataTypes } from "sequelize";
+import sequelize from "../db/index.js";
 
-// Product.hasMany(OrderProduct, { foreignKey: "productId" });
-// OrderProduct.belongsTo(Product, { foreignKey: "productId" });
-
-const Product = sequelize.define('Product', {
-  title: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  content: {
-    type: DataTypes.TEXT,
-    allowNull: false
-  }
+const Product = sequelize.define("Product", {
+  name: { type: DataTypes.STRING, allowNull: false },
+  description: { type: DataTypes.STRING, allowNull: false },
+  price: { type: DataTypes.FLOAT, allowNull: false },
+  categoryId: { type: DataTypes.INTEGER, allowNull: false },
 });
 
 export default Product;

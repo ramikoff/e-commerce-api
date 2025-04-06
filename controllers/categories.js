@@ -14,12 +14,17 @@ export const createCategory = async (req, res) => {
 
 export const getCategoryById = async (req, res) => {
   const { id } = req.params;
-  const category = await Category.findByPk(id, { include: Product });
+
+  const category = await Category.findByPk(id);
 
   if (!category) {
     throw new ErrorResponse("Category not found", 404);
   }
-  res.json(category);
+
+  res.json({
+    id: category.id,
+    name: category.name,
+  });
 };
 
 export const updateCategory = async (req, res) => {
@@ -36,5 +41,5 @@ export const deleteCategory = async (req, res) => {
   const category = await Category.findByPk(id);
   if (!category) throw new ErrorResponse("Category not found", 404);
   await category.destroy();
-  res.json({ message: "Category deleted" });
+  res.json({ message: "Category deleted successfully" });
 };
