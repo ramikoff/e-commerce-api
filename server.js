@@ -1,6 +1,7 @@
+// import "./db/associations.js";
 import express from "express";
-import userRouter from "./routers/userRouter.js";
-import orderRouter from "./routers/orderRouter.js";
+import productRouter from "./routers/productRouter.js";
+import categoryRouter from "./routers/categoryRouter.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import sequelize from "./db/index.js";
 
@@ -9,12 +10,8 @@ const port = process.env.PORT || 8080;
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("E-commerce API is running!");
-});
-
-app.use("/users", userRouter);
-app.use("/orders", orderRouter);
+app.use("/products", productRouter);
+app.use("/categories", categoryRouter);
 
 app.use(errorHandler);
 
