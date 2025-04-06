@@ -1,7 +1,10 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../db/index.js';
 
-const Post = sequelize.define('Post', {
+// Product.hasMany(OrderProduct, { foreignKey: "productId" });
+// OrderProduct.belongsTo(Product, { foreignKey: "productId" });
+
+const Product = sequelize.define('Product', {
   title: {
     type: DataTypes.STRING,
     allowNull: false
@@ -12,4 +15,4 @@ const Post = sequelize.define('Post', {
   }
 });
 
-export default Post;
+export default Product;
