@@ -1,7 +1,7 @@
-import "./db/associations.js";
+// import "./db/associations.js";
 import express from "express";
-import postRouter from "./routers/postRouter.js";
-import userRouter from "./routers/userRouter.js";
+import productRouter from "./routers/productRouter.js";
+import categoryRouter from "./routers/categoryRouter.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
@@ -9,8 +9,8 @@ const port = process.env.PORT || 8080;
 
 app.use(express.json());
 
-app.use("/posts", postRouter);
-app.use("/users", userRouter);
+app.use("/products", productRouter);
+app.use("/categories", categoryRouter);
 
 app.use(errorHandler);
 

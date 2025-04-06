@@ -1,13 +1,13 @@
 import sequelize from './index.js';
-import Post from '../models/Post.js';
-import User from '../models/User.js';
+import Product from '../models/Product.js';
+import Category from '../models/Category.js';
 
-User.hasMany(Post, {
+Category.hasMany(Product, {
   foreignKey: {
     allowNull: false,
     name: 'userId'
   }
 });
-Post.belongsTo(User, { foreignKey: { allowNull: false, name: 'userId' }, onDelete: 'CASCADE' });
+Product.belongsTo(Category, { foreignKey: { allowNull: false, name: 'categoryId' }, onDelete: 'CASCADE' });
 
 sequelize.sync();
