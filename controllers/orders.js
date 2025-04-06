@@ -1,19 +1,19 @@
 import Order from "../models/Order.js";
 import OrderProduct from "../models/OrderProduct.js";
-// Hier muss getProductById importiert werden, um die Produktinformationen zu erhalten
-
-// Mock data for products
+// Сюда нужно импортировать getProductById из контроллера
+// Dummy data for products
 const mockProducts = [
   { id: 1, name: "Product A", price: 100 },
   { id: 2, name: "Product B", price: 200 },
+  { id: 3, name: "Product C", price: 300 },
 ];
 
-// Mock function to simulate fetching a product
+// Dummy function to simulate fetching a product
 const getProductById = async (productId) => {
   return mockProducts.find((product) => product.id === productId) || null;
 };
 
-// Dieses Snippet ist eine Dummyfunktion, die Produktinformationen zurückgibt.
+// This snippet is a dummy function that returns product information.
 
 // Orders
 export const getOrders = async (req, res) => {
